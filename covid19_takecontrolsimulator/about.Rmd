@@ -1,0 +1,24 @@
+---
+title: "About"
+output: html_notebook
+---
+
+Rscripts used to make this R Shiny web application are available upon request to <lustiga@landcareresearch.co.nz>
+
+This simulator was originally developed by [Alex James](https://www.canterbury.ac.nz/engineering/contact-us/people/alex-james.html) and [Michael Plank](https://www.canterbury.ac.nz/engineering/contact-us/people/michael-plank.html) whom you can contact with questions <alex.james@canterbury.ac.nz> or <micheal.plank@canterbury.ac.nz>.
+
+A team of researchers contributed to the continual development of the model and app:
+
+* [Audrey Lustig](https://www.landcareresearch.co.nz/about/people/staff-details?id=bHVzdGlnYQ==) (data synthesis and coding)
+* [Rachelle Binny](https://www.landcareresearch.co.nz/about/people/staff-details?id=Ymlubnly) (epidemiological model development)
+* Nicholas Steyn (literature review and parameter collection)
+* [Ann Brower](https://www.canterbury.ac.nz/science/contact-us/people/ann-brower.html) (science communicator)
+* [Shaun Hendy](https://unidirectory.auckland.ac.nz/profile/shaun-hendy) (project manager, Director of Te Pūnaha Matatini)
+
+The app is currently hosted by the [Centre for eResearch](https://www.eresearch.auckland.ac.nz/) at the University of Auckland.
+Funding was generously provided by [Te Pūnaha Matatini](https://www.tepunahamatatini.ac.nz/) and [Manaaki Whenua Landcare Research](https://www.landcareresearch.co.nz/).
+
+Other COVID-19 apps that we recommend include:
+* [What role does each of us play in protecting our community ?](http://wlab.fmed.ulaval.ca/projects/socdist/#/Animation)
+* [COVID-19 Epidemic Calculator](http://gabgoh.github.io/COVID/index.html)
+
