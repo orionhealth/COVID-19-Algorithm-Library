@@ -22,3 +22,9 @@ Other COVID-19 apps that we recommend include:
 * [What role does each of us play in protecting our community ?](http://wlab.fmed.ulaval.ca/projects/socdist/#/Animation)
 * [COVID-19 Epidemic Calculator](http://gabgoh.github.io/COVID/index.html)
 
+Ressources:
+* [Modelling COVID-19 spread and the effects of Alert Level 4 in New Zealand](https://cpb-ap-se2.wpmucdn.com/blogs.auckland.ac.nz/dist/d/75/files/2017/01/Stochastic-Model-FINAL-RELEASE.pdf)
+* [Effect of Alert Level 4 on Reff: review of international COVID-19 cases](https://cpb-ap-se2.wpmucdn.com/blogs.auckland.ac.nz/dist/d/75/files/2020/04/InternationalReffReview_FullReport_21Apr_FINAL2.pdf)
+* [A structured model for COVID-19 spread: Modelling age and healthcare inequities](https://cpb-ap-se2.wpmucdn.com/blogs.auckland.ac.nz/dist/d/75/files/2017/01/structured-model-FINAL.pdf)
+* [Estimated inequities in COVID-19 infection fatality rates by ethnicity for New Zealand](https://cpb-ap-se2.wpmucdn.com/blogs.auckland.ac.nz/dist/d/75/files/2020/04/Estimated-ifrs_draft12.ACTUALFINAL.pdf)
+* [Suppression and Mitigation Strategiesfor Control of COVID-19 in New Zealand](https://cpb-ap-se2.wpmucdn.com/blogs.auckland.ac.nz/dist/d/75/files/2017/01/Supression-and-Mitigation-Strategies-New-Zealand-TPM-1.pdf)

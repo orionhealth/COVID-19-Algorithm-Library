@@ -37,6 +37,7 @@ GetParams_SEIR <-function(input){
 		level4controlperiod <- c(0,0)
 		Afterlevel4controlperiod <- c(0,0)
 		level2period <- c(0,0) 
+		level1period <- c(0,0) 
 		Nbrep <- 1
 	}
 	# Set high control periods
@@ -65,21 +66,30 @@ GetParams_SEIR <-function(input){
 		Control_level3 <- (input$LowControlR0 / ((PSub * InfS) + (1 - PSub))) / PRClin 
 		Control_level4 <- (input$HighControlR0 / ((PSub * InfS) + (1 - PSub))) / PRClin
 		Control_level2 <- (input$level2R0 / ((PSub * InfS) + (1 - PSub))) / PRClin
-		Control <- c(1, Control_level2, Control_level3, Control_level4)
+		Control_level1 <- (input$level1R0 / ((PSub * InfS) + (1 - PSub))) / PRClin
+		Control_prelockdown <- (input$Rprelockdown / ((PSub * InfS) + (1 - PSub))) / PRClin
+		Control <- c(1, Control_level1, Control_level2, Control_level3, Control_level4, Control_prelockdown)
 		# Transmission rate after isolation (65%) 
 		InfC <- input$InfC/100
 		# Control period
 		level4controlperiod <- input$level4controlperiod
+		if(input$Afterlevel4controlperiod > 0){
 		Afterlevel4controlperiod <- c(level4controlperiod[2], level4controlperiod[2] + input$Afterlevel4controlperiod)
+		}
+		else{Afterlevel4controlperiod <- c(0, 0)}
 		if(input$level2period > 0){
 			level2period <- c(Afterlevel4controlperiod[2], Afterlevel4controlperiod[2] + input$level2period)
 		} 
 		else{level2period <- c(0, 0)}
+		if(input$level1period > 0){
+			level1period <- c(level2period[2], level2period[2] + input$level1period)
+		} 
+		else{level1period <- c(0, 0)}
 		# Number of replication
 		Nbrep <- input$Nbrep
 	}
 		
-	model_parameter <- list('simulation_time' = simulation_time, 'initInf' = N,  'PS0' = PS0, 'PRClin' = PRClin, 'Control' = Control, 'EOnsetToS' = EOnsetToS, 'EOnsetToIsol' = EOnsetToIsol, 'PSub' = PSub, 'Psevere' = Psevere, 'InfS' = InfS, 'InfC' = InfC, 'TG' = TG, 'level2period' = level2period, 'Afterlevel4controlperiod' = Afterlevel4controlperiod, 'level4controlperiod' = level4controlperiod, 'Nbrep' = Nbrep)
+	model_parameter <- list('simulation_time' = simulation_time, 'initInf' = N,  'PS0' = PS0, 'PRClin' = PRClin, 'Control' = Control, 'EOnsetToS' = EOnsetToS, 'EOnsetToIsol' = EOnsetToIsol, 'PSub' = PSub, 'Psevere' = Psevere, 'InfS' = InfS, 'InfC' = InfC, 'TG' = TG, 'level1period' = level1period, 'level2period' = level2period, 'Afterlevel4controlperiod' = Afterlevel4controlperiod, 'level4controlperiod' = level4controlperiod, 'Nbrep' = Nbrep)
 	return(model_parameter)
 }
 
@@ -149,10 +159,12 @@ SimBranchingModel <- function(input, nbrep){
 		TEnd <- ParamStruct$simulation_time # Simulation time
 		PS0 <- ParamStruct$PS0 # Number of individuals in the  population
 		PRClin <- ParamStruct$PRClin # Effective RClinical
-		Psevere <- ParamStruct$Psevere # Propportion of severe infections 
-		PTL3 <- seq(ParamStruct$Afterlevel4controlperiod[1], ParamStruct$Afterlevel4controlperiod[2]) # Start - end date of level 3
+		Psevere <- ParamStruct$Psevere # Propportion of severe infections 		
 		PTL4 <- seq(ParamStruct$level4controlperiod[1], ParamStruct$level4controlperiod[2]) # Start - end date of level 4
-		PTL2 <- seq(ParamStruct$level2period[1], ParamStruct$level2period[2]) # Start -end data of level 2
+		PTL3 <- seq(ParamStruct$Afterlevel4controlperiod[1], ParamStruct$Afterlevel4controlperiod[2]) # Start - end date of level 3
+		PTL2 <- seq(ParamStruct$level2period[1], ParamStruct$level2period[2]) # Start - end data of level 2
+		PTL1 <- seq(ParamStruct$level1period[1], ParamStruct$level1period[2]) # Start - end data of level 1
+		#
 		TG <- ParamStruct$TG # Generation time
 		# Expose everyone in the last 10 days
 		Exp <- -10 * runif(N, min = 0, max = 1)
@@ -188,12 +200,18 @@ SimBranchingModel <- function(input, nbrep){
 				# Remove indivdiduals done with infection from initial data frame
 				D <- D[!Done, ]
 				C <- Control[1]
+				# Control prelockdown 
+				if (timeStep < PTL4[1]){C = Control[6]}
 				# Change control level on march 25th
-				if (timeStep  %in% PTL4){C = Control[4]}
+				if (timeStep  %in% PTL4){C = Control[5]}
 				# Change again on April 27th
-				if (timeStep %in% PTL3){C = Control[3]}
+				if (timeStep %in% PTL3){C = Control[4]}
+				# Change again on May 5th
+				if (timeStep %in% PTL2){C = Control[3]}
+				# Change again on May 5th
+				if (timeStep %in% PTL1){C = Control[2]}
 				# Change after 28 days again
-				if (timeStep %in% PTL2){C = Control[2]}
+				if (timeStep > PTL1[2]){C = Control[1]}
 			}
 		}
 		D <- rbind(DFinished, D)
@@ -328,3 +346,38 @@ OneDay <- function(D, timeStep, C, EOnsetToIsol, EOnsetToS, PRClin, PSub, TG, In
 	else{NewD <- NULL}	
 	return(list(D, NewD))
 }
+
+logitfct <- function(scale, upper, upperx, location){
+	x = seq(1, upperx)
+	y = dlogis(x, location = location, scale = scale, log = FALSE)
+	cy <-rep(0,  upper)
+	cy[1] <- 0
+	for (i in seq(2,  upperx)){cy[i] = cy[i - 1] + y[i]}
+	cyu <- cy *  upper
+
+}
+#upper = 50
+#scale = 18
+#upperx = 101
+#x = seq(1, upperx)
+#cyu = logitfct(scale, upper, upperx, 50)
+#plot(x, cyu, type='l')
+# ----------------------------------------------------------------------------
+# R calculator
+# ----------------------------------------------------------------------------
+Rcalulator <-function(input){
+	Rbaseline <- 2.5
+	yW <- logitfct(20, 50, 51, 25)[input$winter + 1]	
+	Rbaseline <- Rbaseline + (Rbaseline * yW/100)
+	yH <- logitfct(8, 25, 26, 12.5)[input$handwash + 1]	
+	hygiene <- Rbaseline - (Rbaseline * yH/100)
+	yD <- logitfct(18, 70, 101, 50)[input$physicaldistancing + 1]
+	physical_distancing <- hygiene - (hygiene * yD/100)
+	yI <- logitfct(20, 40, 101, 50)[input$isolating+ 1]
+	isolation <- physical_distancing -(physical_distancing * yI/100)
+	yQ <- logitfct(20, 50, 101, 50)[input$quarantine + 1]
+	quarantine <- isolation - (isolation  * yQ/100)
+	return(quarantine)
+}
+
+		# Population in each city
